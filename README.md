@@ -1,4 +1,4 @@
-# VK Photo Uploader
+# VK Photo Backup
 
 ## This Python script can be used to save photos from a user's VKontakte account and upload them to a Yandex Disk or Google Drive. The script requires the installation of some libraries: requests, json, os, logging, shutil, pprint, datetime, google-auth, google-auth-oauthlib, google-auth-httplib2, google-api-python-client
 
