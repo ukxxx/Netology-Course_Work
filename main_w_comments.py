@@ -290,9 +290,7 @@ class GdUploader:
 
         folder_name = vk_client.get_folder_name()
         drive_service = build('drive', 'v3', credentials=self.creds)
-        folder_id = self.create_folder()['id']
-        folder_metadata = {'name': folder_name, 'mimeType': 'application/vnd.google-apps.folder'}
-        folder = drive_service.files().create(body=folder_metadata, fields='id').execute()
+        folder = self.create_folder()
 
         # Upload each file to folder
         for file_name in os.listdir(folder_name):
@@ -310,7 +308,7 @@ class GdUploader:
                 file = drive_service.files().create(body=file_metadata, media_body=media, fields='id').execute()
 
                 # Print upload confirmation message
-                print(f'\nFile "{file_metadata["name"]}" has been uploaded to folder "{folder_name}" with URL: "https://drive.google.com/drive/folders/{folder_id}".\n')
+                print(f'\nFile "{file_metadata["name"]}" has been uploaded to folder "{folder_name}" with URL: "https://drive.google.com/drive/folders/{folder.get("id")}".\n')
 
 if __name__ == '__main__':
 
