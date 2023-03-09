@@ -187,7 +187,7 @@ class GdUploader:
         SCOPES = ['https://www.googleapis.com/auth/drive.file']
         self.creds = None
 
-        if os.path.exists('gd_token.json'):
+        if os.path.exists('gd_token.json') and os.path.getsize('gd_token.json') != 0:
             with open('gd_token.json', 'r') as file:
                 token = json.load(file)
             self.creds = Credentials.from_authorized_user_info(token, SCOPES)
@@ -196,9 +196,10 @@ class GdUploader:
                 try:
                     self.creds.refresh(Request())
                 except:
-                    flow = InstalledAppFlow.from_client_secrets_file('credentials.json', SCOPES)
-                    self.creds = flow.run_local_server(port=0)
-
+                    pass
+            flow = InstalledAppFlow.from_client_secrets_file('credentials.json', SCOPES)
+            self.creds = flow.run_local_server(port=0)
+            print(self.creds)
         with open('gd_token.json', 'w') as token:
             token.write(self.creds.to_json())
         with open('gd_token.json', 'r') as f:
@@ -230,19 +231,18 @@ class GdUploader:
     def upload(self):
 
         folder_name = vk_client.get_folder_name()
-        folder_content = os.listdir(folder_name)
         drive_service = build('drive', 'v3', credentials=self.creds)
-        self.create_folder()
-
-        for file_name in folder_content:
-            folder_query = "mimeType='application/vnd.google-apps.folder' and trashed = false and name = '" + folder_name + "'"
-            folder = drive_service.files().list(q=folder_query, fields='files(id)').execute().get('files', [])
+        folder_id = self.create_folder()['id']
+        folder_metadata = {'name': folder_name, 'mimeType': 'application/vnd.google-apps.folder'}
+        folder = drive_service.files().create(body=folder_metadata, fields='id').execute()
+        print(folder)
+        
+        for file_name in os.listdir(folder_name):
             file_path= f'{folder_name}/{file_name}'
             if len(folder) == 0:
-                print(f'Folder "{folder_name}" not found.')
+                print(f'Folder "{folder_name}" not created on Google Drive.')
             else:
-                folder_id = folder[0]['id']
-                file_metadata = {'name': os.path.basename(file_path), 'parents': [folder_id]}
+                file_metadata = {'name': os.path.basename(file_path), 'parents': [folder.get("id")] }
                 media = MediaFileUpload(file_path, resumable=True)
                 file = drive_service.files().create(body=file_metadata, media_body=media, fields='id').execute()
                 print(f'\nFile "{file_metadata["name"]}" has been uploaded to folder "{folder_name}" with URL: "https://drive.google.com/drive/folders/{folder_id}".\n')
