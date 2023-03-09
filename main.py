@@ -257,8 +257,8 @@ if __name__ == '__main__':
                 vk_token = file.read().strip()
         except:
             vk_token = input('\nPlease enter Vkontakte token:\n')
-        vk_id = input('\nPlease enter Vkontakte user id or screen name:\n')
-        number_of_photos = input('\nPlease enter number of photos to backup:\n')
+        vk_id = input('\nPlease enter Vkontakte user id or its screen name:\n')
+        number_of_photos = input('\nPlease enter the number of photos to backup:\n')
         vk_client = VkSaver(vk_token, '5.131',vk_id, number_of_photos) 
         vk_client.get_album()
 
