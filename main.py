@@ -235,7 +235,6 @@ class GdUploader:
         folder_id = self.create_folder()['id']
         folder_metadata = {'name': folder_name, 'mimeType': 'application/vnd.google-apps.folder'}
         folder = drive_service.files().create(body=folder_metadata, fields='id').execute()
-        print(folder)
         
         for file_name in os.listdir(folder_name):
             file_path= f'{folder_name}/{file_name}'

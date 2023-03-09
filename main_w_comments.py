@@ -288,20 +288,15 @@ class GdUploader:
     def upload(self):
         # Uploads files to Google Drive
 
-        # Get folder name and content
-        folder_name = vk_client.get_folder_name() # Here i don't like it how code calls vk_client instance of VkSaver class. But have no idea how to make it right
-        folder_content = os.listdir(folder_name)
-
-        # Authenticate with Google Drive API
+        folder_name = vk_client.get_folder_name()
         drive_service = build('drive', 'v3', credentials=self.creds)
-
-        # Create folder if not exists
-        self.create_folder()
+        folder_id = self.create_folder()['id']
+        folder_metadata = {'name': folder_name, 'mimeType': 'application/vnd.google-apps.folder'}
+        folder = drive_service.files().create(body=folder_metadata, fields='id').execute()
 
         # Upload each file to folder
-        for file_name in folder_content:
-            folder_query = "mimeType='application/vnd.google-apps.folder' and trashed = false and name = '" + folder_name + "'"
-            folder = drive_service.files().list(q=folder_query, fields='files(id)').execute().get('files', [])
+        for file_name in os.listdir(folder_name):
+
             file_path= f'{folder_name}/{file_name}'
 
             # If folder not found, print error message
@@ -310,7 +305,7 @@ class GdUploader:
             else:
                 folder_id = folder[0]['id']
                  # Set file metadata and upload the file
-                file_metadata = {'name': os.path.basename(file_path), 'parents': [folder_id]}
+                file_metadata = {'name': os.path.basename(file_path), 'parents': [folder.get("id")]}
                 media = MediaFileUpload(file_path, resumable=True)
                 file = drive_service.files().create(body=file_metadata, media_body=media, fields='id').execute()
 
