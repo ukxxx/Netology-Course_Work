@@ -42,6 +42,7 @@ class VkSaver:
             'v':'5.131' 
         }
         result = requests.get(get_folder_name_url, params={**self.params, **user_params}).json()
+        print(result)
         res = f"{result['response'][0]['first_name']} {result['response'][0]['last_name']} {self.album_name}"
         return res
 
@@ -96,7 +97,7 @@ class VkSaver:
                 if photo['likes']['count'] not in to_download.keys():
                     file_name = photo['likes']['count']
                 else:
-                    file_name = str(photo['likes']['count']) + '_' + datetime.fromtimestamp(photo['date']).strftime("%Y-%m-%d")
+                    file_name = str(photo['likes']['count']) + '_' + datetime.fromtimestamp(photo['date']).strftime("%Y-%m-%d_%H_%M_%S")
                 max_size = 0
                 for size in photo['sizes']:
                     counter_old_photos = 9
@@ -118,13 +119,13 @@ class VkSaver:
         return to_download
     
     def save_photos(self):
-        user_id = self.user_id
+
         if not os.path.exists(self.get_folder_name()):
             os.makedirs(self.get_folder_name())
-
+        folder = self.get_folder_name()
         for key, value in self.get_photos_urls().items():
             response = requests.get(value)
-            with open(os.path.join(self.get_folder_name(), str(key) +'.jpg'), 'wb') as file:
+            with open(os.path.join(folder, str(key) +'.jpg'), 'wb') as file:
                 file.write(response.content)
         return None
 

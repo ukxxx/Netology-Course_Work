@@ -127,7 +127,7 @@ class VkSaver:
                     file_name = photo['likes']['count']
                 else:
                     # If it is in to_download.keys(), it assigns the number of likes and the date as the file_name.
-                    file_name = str(photo['likes']['count']) + '_' + datetime.fromtimestamp(photo['date']).strftime("%Y-%m-%d")
+                    file_name = str(photo['likes']['count']) + '_' + datetime.fromtimestamp(photo['date']).strftime("%Y-%m-%d_%H_%M_%S")
                 # It initializes a variable called max_size to 0.
                 max_size = 0
                 # It loops through the sizes of the photo.
@@ -160,18 +160,17 @@ class VkSaver:
 
     def save_photos(self):
         # This method prints the user_id and assigns the user_id to a variable called user_id.
-        print(self.user_id)
-        user_id = self.user_id
+
         # If the folder doesn't exist, it creates the folder using the get_folder_name() method.
         if not os.path.exists(self.get_folder_name()):
             os.makedirs(self.get_folder_name())
-
+        folder = self.get_folder_name()
         # It loops through the key-value pairs
         for key, value in self.get_photos_urls().items():
             # It sends a request to get the content of the url and assigns it to a variable called response.
             response = requests.get(value)
         # It creates a file called key.jpg in the folder created earlier and writes the content of the response to it.
-        with open(os.path.join(self.get_folder_name(), str(key) +'.jpg'), 'wb') as file:
+        with open(os.path.join(folder, str(key) +'.jpg'), 'wb') as file:
             file.write(response.content)
         # It returns None.
         return None
