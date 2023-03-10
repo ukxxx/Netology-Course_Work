@@ -156,24 +156,24 @@ class YdUploader:
 
     def create_folder(self):
 
-        folder_path = vk_client.get_folder_name()
+        folder_name = vk_client.get_folder_name()
         headers = self.get_headers()
         folder_params = {
-            'path' : folder_path
+            'path' : folder_name
         }
         response = requests.put(self.url, headers=headers, params=folder_params)
-        return folder_path
+        return folder_name
 
     def upload(self):
 
         folder_name = vk_client.get_folder_name()
-        folder_path = self.create_folder()
-        folder_content = os.listdir(folder_path)
+        folder_name = self.create_folder()
+        folder_content = os.listdir(folder_name)
 
         for file_name in folder_content:
             link = self.get_link(file_path= f'{folder_name}/{file_name}').get('href', '')
-            if os.path.isfile(os.path.join(folder_path, file_name)):
-                with open(os.path.join(folder_path, file_name), 'br') as file:
+            if os.path.isfile(os.path.join(folder_name, file_name)):
+                with open(os.path.join(folder_name, file_name), 'br') as file:
                     response = requests.put(link, file)
                 response.raise_for_status()
                 if response.status_code == 201:
