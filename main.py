@@ -200,7 +200,6 @@ class GdUploader:
                     pass
             flow = InstalledAppFlow.from_client_secrets_file('credentials.json', SCOPES)
             self.creds = flow.run_local_server(port=0)
-            print(self.creds)
         with open('gd_token.json', 'w') as token:
             token.write(self.creds.to_json())
         with open('gd_token.json', 'r') as f:
