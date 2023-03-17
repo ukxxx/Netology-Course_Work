@@ -46,7 +46,7 @@ class VkSaver:
         try:
             data = result['response']
         except KeyError:
-            print(f'\nSomething is went wrong. Please provide correct VK token, API version, user ID an number of photo to download or try again later.\n')
+            print(f'\nSomething is went wrong. Please provide correct VK token, API version, user ID and number of photo to download or try again later.\n')
             new_token = input('VK token: \n')
             new_version = input('API version: \n')
             new_user_id = input('User ID:\n')
