@@ -4,7 +4,6 @@ import json
 import os
 import logging
 import shutil
-from pprint import pprint
 from datetime import datetime
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -32,6 +31,15 @@ class VkSaver:
             'user_ids': user_id
         }
         result = requests.get(get_user_id_url, params={**self.params, **user_params}).json()
+        try:
+            data = result['response']
+        except KeyError:
+            print(f'\nSomething is went wrong. Please provide correct VK token, API version, user ID an number of photo to download or try again later.\n')
+            new_token = input('VK token: \n')
+            new_version = input('API version: \n')
+            new_user_id = input('User ID:\n')
+            new_number_of_photos = input('\nNumber of photos to backup:\n')
+            self.__init__(new_token, new_version, new_user_id, number=new_number_of_photos)
         self.user_id = result['response'][0]['id']
 
     def get_folder_name(self):

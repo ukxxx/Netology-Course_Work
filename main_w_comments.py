@@ -41,7 +41,17 @@ class VkSaver:
             'user_ids': user_id
         }
         result = requests.get(get_user_id_url, params={**self.params, **user_params}).json()
-        
+
+        #Try to reach some data in response. If there is an error ask user to reinput parameters an reinitialize instance of VkSaver class.
+        try:
+            data = result['response']
+        except KeyError:
+            print(f'\nSomething is went wrong. Please provide correct VK token, API version, user ID an number of photo to download or try again later.\n')
+            new_token = input('VK token: \n')
+            new_version = input('API version: \n')
+            new_user_id = input('User ID:\n')
+            new_number_of_photos = input('\nNumber of photos to backup:\n')
+            self.__init__(new_token, new_version, new_user_id, number=new_number_of_photos)
         # Set user ID based on response
         self.user_id = result['response'][0]['id']
     
